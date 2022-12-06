@@ -1,2 +1,101 @@
+### Hack chip-set API
+  Add16(a= ,b= ,out= ); 
+  ALU(x= ,y= ,zx= ,nx= ,zy= ,ny= ,f= ,no= ,out= ,zr= ,ng= ); 
+  And16(a= ,b= ,out= ); 
+  And(a= ,b= ,out= ); 
+  ARegister(in= ,load= ,out= ); 
+  Bit(in= ,load= ,out= ); 
+  CPU(inM= ,instruction= ,reset= ,outM= ,writeM= ,addressM= ,pc= ); 
+  DFF(in= ,out= ); 
+  DMux4Way(in= ,sel= ,a= ,b= ,c= ,d= ); 
+  DMux8Way(in= ,sel= ,a= ,b= ,c= ,d= ,e= ,f= ,g= ,h= ); 
+  DMux(in= ,sel= ,a= ,b= ); 
+  DRegister(in= ,load= ,out= ); 
+  FullAdder(a= ,b= ,c= ,sum= ,carry= );
+  HalfAdder(a= ,b= ,sum= , carry= ); 
+  Inc16(in= ,out= ); 
+  Keyboard(out= ); 
+  Memory(in= ,load= ,address= ,out= ); 
+  Mux16(a= ,b= ,sel= ,out= ); 
+  Mux4Way16(a= ,b= ,c= ,d= ,sel= ,out= ); 
+  Mux8Way16(a= ,b= ,c= ,d= ,e= ,f= ,g= ,h= ,sel= ,out= ); 
+  Mux(a= ,b= ,sel= ,out= ); 
+  Nand(a= ,b= ,out= ); 
+  Not16(in= ,out= ); 
+  Not(in= ,out= ); 
+  Or16(a= ,b= ,out= ); 
+  Or8Way(in= ,out= ); 
+  Or(a= ,b= ,out= ); 
+  PC(in= ,load= ,inc= ,reset= ,out= ); 
+  RAM16K(in= ,load= ,address= ,out= ); 
+  RAM4K(in= ,load= ,address= ,out= ); 
+  RAM512(in= ,load= ,address= ,out= ); 
+  RAM64(in= ,load= ,address= ,out= ); 
+  RAM8(in= ,load= ,address= ,out= ); 
+  Register(in= ,load= ,out= ); 
+  ROM32K(address= ,out= ); 
+  Screen(in= ,load= ,address= ,out= ); 
+  Xor(a= ,b= ,out= ); 
+
 ### 
 Variables cannot contain _
+
+# multi bit buses
+bus = multiple bits as one chunk
+in a[4] -> 4 bits
+ then: a[1] -> second bit
+
+sub-buses
+a[0..7]
+false and true plugs 0's and 1's into a bus
+
+# way chips
+takes bits in a bus and convert them into one value
+
+### Sub-busing
+Sub-busing can only be used on buses that are named in the IN and OUT statements of an HDL file, or inputs and outputs of the chip-parts used in the PARTS section. If you need a sub-bus of an internal bus, you must create the narrower bus as an output from a chip-part. For example:
+
+    CHIP Foo {
+       IN in[16];
+       OUT out;
+    PARTS:
+       Something16 (in=in, out=notIn);
+       Or8Way (in=notIn[4..11], out=out);
+    }
+
+This implementation causes an error on the Or8Way statement. This needs to be coded as:
+
+       Something16 (in=in, out[4..11]=notIn);
+       Or8Way (in=notIn, out=out);
+
+Buses and the "true" and "false" Constants
+The "true" and "false" constants can be used to assign 1 or 0 to all signals of a bus, or to a sub-bus. The constants automatically adjust to the width of the bus or sub-bus.
+
+        Or16(a=x, b[0..7]=true, b[8..15]=false, out=y);
+
+This creates 16-bit bus y containing  x | 0000000011111111  where x is a 16-bit bus.
+
+        Add16(a=in, b=true, out=inMinus1);
+
+This creates 16-bit bus inMinus1 containing  in + 1111111111111111.
+(1111111111111111 is the binary representation of -1.)
+Multiple Outputs
+Sometimes you need more than one sub-bus connected to the output of a chip-part. Simply add more than one out= connection to the chip-part definition.
+
+    CHIP Foo {
+       IN in[16];
+       OUT out[8];
+       PARTS:
+           Not16 (in=in, out[0..7]=low8, out[8..15]=high8);
+           Something8 (a=low8, b=high8, out=out);
+    }
+
+This also works if you want to use an output of a chip in further computations.
+
+    CHIP Foo {
+    IN a, b, c;
+    OUT out1, out2;
+    PARTS:
+       Something (a=a, b=b, out=x, out=out1);
+       Whatever (a=x, b=c, out=out2);
+    }
