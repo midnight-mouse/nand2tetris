@@ -16,8 +16,11 @@
     @addr
     M=D         // addr = SCREEN
 
-    @i
-    M=0         // i = 0
+    @row
+    M=0         // row = 0
+
+    @col
+    M=0         // col = 0
 
 (FILL)
     @KBD
@@ -25,12 +28,31 @@
     @ERASE
     D;JEQ       // if no key pressed; goto ERASE
 
-    @i
+    @row
     D=M
-    @8192
+    @256
     D=A-D
     @FILL
-    D;JEQ       // if i == 8192 (end of screen 256*32=8192); goto FILL
+    D;JEQ       // if row == 256 (end of screen); goto FILL
+
+    @FILL_LOOP
+    0;JMP       // goto FILL_LOOP
+
+(FILL_RESET)
+    @col
+    M=0         // col = 0
+    @row
+    M=M+1       // row = row + 1
+    @FILL
+    0;JMP       // goto FILL
+
+(FILL_LOOP)
+    @32
+    D=A
+    @col
+    D=D-M
+    @FILL_RESET
+    D;JEQ       // if col == 32; goto FILL_RESET
 
     @addr
     A=M
@@ -39,10 +61,10 @@
     @addr
     M=M+1       // addr = addr + 1
 
-    @i
-    M=M+1       // i = i + 1
+    @col
+    M=M+1       // col = col + 1
 
-    @FILL
+    @FILL_LOOP
     0;JMP       // goto FILL
 
 (ERASE)
@@ -54,7 +76,26 @@
     @i
     D=M
     @ERASE
-    D;JLT       // if i < 0 (top of screen); goto ERASE
+    D;JLT       // if i < 0; goto ERASE
+
+    @ERASE_LOOP
+    0;JMP       // goto ERASE_LOOP
+
+(ERASE_RESET)
+    @col
+    M=0         // col = 0
+    @row
+    M=M-1       // row = row - 1
+    @ERASE
+    0;JMP       // goto ERASE
+
+(ERASE_LOOP)
+    @32
+    D=A
+    @col
+    D=D-M
+    @ERASE_RESET
+    D;JEQ       // if col == 32; goto FILL_RESET
 
     @addr
     A=M
@@ -63,11 +104,11 @@
     @addr
     M=M-1       // addr = addr - 1
 
-    @i
-    M=M-1       // i = i - 1
+    @col
+    M=M+1       // col = col + 1
 
-    @ERASE
-    0;JMP       // goto ERASE
+    @ERASE_LOOP
+    0;JMP       // goto FILL
 
 (END)
     @END

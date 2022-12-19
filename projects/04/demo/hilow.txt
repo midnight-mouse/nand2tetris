@@ -1,0 +1,46 @@
+// Program: hilow.asm
+// Implements HI-LOW "guess the number" game in assembly. 
+// User guesses on a number between 0-10 and programs gives guidance: either HIGHER, LOWER, or CORRECT.
+// Usage: Press a NUMBER KEY then ENTER to guess.
+
+// LETTERS:
+// H: three wide
+// One letter at a time!
+pseudo code
+
+display HILOW GAME PRESS ENTER TO START, width=16, height=40
+
+addr=SCREEN
+h=40
+i=0
+c=0
+
+LOOP: if i<h:
+    RAM[addr] = black
+    addr = addr + 32 <-- new row
+    i = i + 1
+
+// Go one column to the right and leave 10 rows blank
+addr = addr + 1// R1 = 1
+addr = addr - 320
+
+h=20
+i=0
+
+LOOP: if i>h:
+    RAM[addr] = black
+    addr = addr - 32
+    i = i + 1
+
+// Leave 10 rows blank
+addr = addr - 320
+
+// go to the right one step
+addr = addr + 1
+draw down
+
+
+INITIALLY: guess in R0
+
+// Begin with HI
+
