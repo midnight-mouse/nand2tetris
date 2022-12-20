@@ -14,7 +14,7 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // Implemented
-    Mux(a=prev, b=in, sel=load, out=inMuxPrev);
-    DFF(in=inMuxPrev, out=prev, out=out);
+    // Select between loading a new value or emitting the existing bit
+    Mux (a=prev, b=in, sel=load, out=inMuxPrev);
+    DFF (in=inMuxPrev, out=prev, out=out);
 }

@@ -15,12 +15,10 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Implemented
-
-    // Determine if write to register
+    // Determine which register to load
     DMux8Way (in=load, sel=address, a=load0, b=load1, c=load2, d=load3, e=load4, f=load5, g=load6, h=load7);
 
-    // Register states
+    // Input load variables into 8 registers
     Register (in=in, load=load0, out=r0);
     Register (in=in, load=load1, out=r1);
     Register (in=in, load=load2, out=r2);

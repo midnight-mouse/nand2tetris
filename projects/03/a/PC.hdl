@@ -16,7 +16,7 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Implemented
+    // Chose between INCREMENTING, LOADING, or RESETING the program counter
     Inc16    (in=r0, out=rInc);
     Mux16    (a=r0, b=rInc, sel=inc, out=rOrInc);
     Mux16    (a=rOrInc, b=in, sel=load, out=loadOrR);
