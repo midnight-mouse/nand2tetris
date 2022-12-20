@@ -19,5 +19,23 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    // Put your code here:
+    /*                   ________inM__________________________
+     *                   |                                    |
+     *     XXXXXXXXXX    |     XXXXX              XXXXXXXXXX  |
+     *     X        X    |---->X   XXXX---loadM-->X        X  |
+     *     X        X          X      X---outM--->X        X  |
+     *  |->X ROM32K X---oROM-->X CPU  X---addrM-->X Memory X--|
+     *  |  X        X          X      X           X        X
+     *  |  X        X    |---->X   XXXX-PC-|      X        X
+     *  |  XXXXXXXXXX    |     XXXXX       |      XXXXXXXXXX
+     *  |                |                 |
+     *  |----------------|-----------------|
+     *                 reset
+     */                     
+
+
+    // Wire together the ROM32K, CPU, and Memory
+    ROM32K (address=PC, out=oROM);
+    CPU    (inM=oMemory, instruction=oROM, reset=reset, outM=outM, writeM=loadM, addressM=addrM, pc=PC);
+    Memory (in=outM, load=loadM, address=addrM, out=oMemory);
 }

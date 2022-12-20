@@ -17,7 +17,7 @@ CHIP Mux4Way16 {
 
     PARTS:
     // Implemented
-    Mux16 (a=a, b=b, sel=sel[0], out=amuxb);
-    Mux16 (a=c, b=d, sel=sel[0], out=cmuxd);
-    Mux16 (a=amuxb, b=cmuxd, sel=sel[1], out=out);
+    Mux16 (a=a, b=b, sel=sel[0], out=amuxb);        // Select within a and b
+    Mux16 (a=c, b=d, sel=sel[0], out=cmuxd);        // Select within c and d
+    Mux16 (a=amuxb, b=cmuxd, sel=sel[1], out=out);  // Select between a/b and c/d
 }

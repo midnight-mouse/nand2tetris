@@ -39,5 +39,50 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // A instruction: 0aaaaaaaaaaaaaaa
+    // C instruction: 111accccccdddjjj
+
+    /////////  ALU logic
+    
+    // Use incoming instruction or ALU output
+    Mux16      (a=instruction, b=oALU, sel=instruction[15], out=whichInstruction);
+    
+    // Save address in A Register if A instruction or the destination bit for A is set
+    Not        (in=instruction[15], out=notInsType); 
+    Or         (a=notInsType, b=instruction[5], out=saveAddr);
+    ARegister  (in=whichInstruction, load=saveAddr, out=aRegister, out[0..14]=addressM);
+
+    // Use C instruction "a" bit as control bit to determine between using A or M
+    Mux16      (a=aRegister, b=inM, sel=instruction[12], out=aMuxM); 
+
+    // Use C instruction "c" bits as ALU control bits to determine computation
+    ALU       (x=dRegister, y=aMuxM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=oALU, out=outM, zr=zer, ng=neg);
+
+    // Save result into D if C instruction and "d" control bit for D is set
+    And       (a=instruction[15], b=instruction[4], out=loadD);
+    DRegister (in=oALU, load=loadD, out=dRegister);
+
+    // Save result into M if C instruction and "d" control bit for M is set
+    And       (a=instruction[3], b=instruction[15], out=writeM);
+
+    /////////  Jump logic
+
+    // Check if ALU output is POSITIVE
+    Not       (in=zer, out=notZer);
+    Not       (in=neg, out=notNeg);
+    And       (a=notZer, b=notNeg, out=posResult);
+
+    // Check jump conditions based on ZERO, NEGATIVE, and POSITIVE ALU result.
+    And       (a=instruction[0], b=posResult, out=posLoad);
+    And       (a=instruction[1], b=zer, out=zerLoad);
+    And       (a=instruction[2], b=neg, out=negLoad);
+
+    // Check if C instruction AND any jump condition holds true 
+    Or        (a=posLoad, b=zerLoad, out=posZerLoad);
+    Or        (a=posZerLoad, b=negLoad, out=jmpLoad);
+    And       (a=instruction[15], b=jmpLoad, out=pcLoad);
+
+    // Increment or load a new address into the program counter to fetch next instruction
+    PC        (in=aRegister, load=pcLoad, inc=true, reset=reset, out[0..14]=pc);
 }

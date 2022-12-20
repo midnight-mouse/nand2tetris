@@ -27,5 +27,20 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+
+    // Select which memory section to load. 
+    //      sel={00,01} ==> RAM 
+    //      sel=10      ==> SCREEN
+    //      sel=11      ==> KEYBOARD
+    DMux4Way  (in=load, sel=address[13..14], a=loadRAM1, b=loadRAM2, c=loadScreen, d=loadKeyboard);
+    Or        (a=loadRAM1, b=loadRAM2, out=loadRAM);
+
+    // Store outputs of all memory chips. Fan RAM into two outputs
+    RAM16K    (in=in, load=loadRAM, address=address[0..13], out=oRAM1, out=oRAM2);
+    Screen    (in=in, load=loadScreen, address=address[0..12], out=oScreen);
+    Keyboard  (out=oKeyboard);
+
+    // Select which output to read from. 
+    Mux4Way16 (a=oRAM1, b=oRAM2, c=oScreen, d=oKeyboard, sel=address[13..14], out=out);
+
 }
