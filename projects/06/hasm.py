@@ -26,7 +26,16 @@ def Pass1(sourceFile):
         elif commandType in (A_COMMAND, C_COMMAND):
             address += 1
         elif commandType == L_COMMAND:
-            pass
+            # pick out LABEL from (LABEL                                 
+            symbol = parser.line[1:]
+
+            # check if symbol does not exist
+            if not symbolTable.Contains(symbol):
+                # add new symbol and check for invalid symbol name                    
+                if not symbolTable.AddEntry(symbol, address): 
+                    FatalError("#Error: Invalid symbol name.")
+
+            
 #################################################################################
 # To be completed:
 #  Each time a pseudo command (Xxx) is encountered, add a new entry to the symbol table,            

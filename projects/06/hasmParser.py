@@ -175,7 +175,13 @@ class Parser(object):
         
 
     def _ParseDest(self):
-        self.dest = ''
+        dest = self.line
+        i = dest.find('=')
+        if i == -1:              # dest is not present
+            self.dest = ''
+        else:
+            self.dest = dest[:i] # use part before "=" sign as mnemonic
+
 #################################################################################
 #   To be completed:
 #      Provides the dest mnemonic in the current C-command (8 possibilities).

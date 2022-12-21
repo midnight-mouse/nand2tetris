@@ -43,6 +43,16 @@ class Code(object):
             'D|M': '1010101',
             'M|D': '1010101'
             }
+    _destDict = {
+            '':     '000',
+            'M':    '001',
+            'D':    '010',
+            'MD':   '011',
+            'A':    '100',
+            'AM':   '101',
+            'AD':   '110',
+            'AMD':  '111'
+    }
     _jumpDict = {
             'JGT': '001',
             'JEQ': '010',
@@ -60,7 +70,16 @@ class Code(object):
         pass    
 
     def Dest(self, mnemonic):
-        return None
+        """
+        Returns the binary code of the dest mnemonic. (3 bits)
+
+        Returns None if the mnemonic cannot be decoded.
+        """
+        if mnemonic in self._destDict:
+            return self._destDict[mnemonic]
+        else:
+            return None     
+ 
 ################################################################
 # To be completed:
 #       Returns the binary code of the dest mnemonic. (3 bits)
