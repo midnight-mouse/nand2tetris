@@ -275,8 +275,7 @@ class CodeWriter(object):
 
     def WriteIf(self, label):
         """
-        Write Hack code for 'if-goto' VM command.
-	To be implemented as part of Project 7
+        Creates and inserts a conditional jump that jumps if the topmost element on the stack is non-zero.
         """
         self.Write('// if-goto')
         self._WriteCode(f'@SP, AM=M-1, D=M, @{self._LocalLabel(label)}, D;JNE')
@@ -284,8 +283,7 @@ class CodeWriter(object):
 
     def WriteFunction(self, functionName, numLocals):
         """
-        Write Hack code for 'function' VM command.
-	To be implemented as part of Project
+        Inserts a function label and allocates numLocals local variables to the stack by pushing 0's.
         """
 
         self.functionName = functionName
@@ -294,14 +292,13 @@ class CodeWriter(object):
         # declare label for function entry
         self.Write(f'({functionName})')
 
-        # push 0 numLocals times
+        # push 0, numLocals times
         for i in range(numLocals):
             self.WritePushPop(C_PUSH, T_CONSTANT, 0)
 
     def WriteReturn(self):
         """
-        Write Hack code for 'return' VM command.
-	To be implemented as part of Project 7
+        Resets memory segment pointers and returns to return address.
         """
         
         # R14 = endFrame
@@ -345,8 +342,7 @@ class CodeWriter(object):
 
     def WriteCall(self, functionName, numArgs):
         """
-        Write Hack code for 'call' VM command.
-	To be implemented as part of Project 7
+        Sets up the stack frame of the "Caller" preparing to call a function, named "Callee".
         """
 
         # helper function for push commands
