@@ -1,5 +1,4 @@
 // function SimpleFunction.test 2
-// label
 (SimpleFunction.test)
 // push constant 0
 @0
@@ -143,6 +142,7 @@ D=M
 @LCL
 M=D
 @R15
+A=M
 0;JMP
 @_1
 (_1)

@@ -255,7 +255,9 @@ class CodeWriter(object):
         if (debug):
             self.file.write('    // Initialization code\n')
         
-        
+        if sysinit == True:
+            self._WriteCode('@256, D=A, @SP, M=D')
+            self.WriteCall('Sys.init', 0)
 
 
     def WriteLabel(self, label):
@@ -265,7 +267,7 @@ class CodeWriter(object):
 
         """
         self.Write('// label')
-        self._WriteCode(f'({label})')
+        self._WriteCode(f'({self._LocalLabel(label)})')
 
     def WriteGoto(self, label):
         """
@@ -273,7 +275,7 @@ class CodeWriter(object):
 	To be implemented as part of Project 7
         """
         self.Write('// goto')
-        self._WriteCode(f'@{label}, 0;JMP')
+        self._WriteCode(f'@{self._LocalLabel(label)}, 0;JMP')
 
     def WriteIf(self, label):
         """
@@ -281,19 +283,20 @@ class CodeWriter(object):
 	To be implemented as part of Project 7
         """
         self.Write('// if-goto')
-        self._WriteCode(f'@SP, AM=M-1, D=M, @{label}, D;JGT')
+        self._WriteCode(f'@SP, AM=M-1, D=M, @{self._LocalLabel(label)}, D;JNE')
         
 
     def WriteFunction(self, functionName, numLocals):
         """
         Write Hack code for 'function' VM command.
-	To be implemented as part of Project 7
+	To be implemented as part of Project
         """
 
+        self.functionName = functionName
         self.Write(f'// function {functionName} {numLocals}')
 
         # declare label for function entry
-        self.WriteLabel(functionName)
+        self.Write(f'({functionName})')
 
         # push 0 numLocals times
         for i in range(numLocals):
@@ -340,7 +343,7 @@ class CodeWriter(object):
         code += ResetSegment('LCL', 4)
 
         # goto retAddr
-        code += f'@R15, 0;JMP'
+        code += f'@R15, A=M, 0;JMP'
 
         self._WriteCode(code)
 
@@ -358,10 +361,10 @@ class CodeWriter(object):
         code = ''
 
         # create returnAddr label
-        returnAddress = self._UniqueLabel()
+        returnAddress = self._LocalLabel('ret.' + self._UniqueLabel()[1:])
 
         # push returnAddr, LCL, ARG, THIS, THAT
-        code += Push(returnAddress)
+        code += f'@{returnAddress}, D=A, @SP, A=M, M=D, @SP, M=M+1, '
         code += Push('LCL')
         code += Push('ARG')
         code += Push('THIS')
@@ -380,7 +383,9 @@ class CodeWriter(object):
         self._WriteCode(code)
 
         # declare label
-        self.WriteLabel(returnAddress)
+        self.Write(f'({returnAddress})')
+
+       
 
 
     

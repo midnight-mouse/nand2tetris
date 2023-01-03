@@ -33,7 +33,11 @@ def Pass1(sourceFile):
             if not symbolTable.Contains(symbol):
                 # add new symbol and check for invalid symbol name                    
                 if not symbolTable.AddEntry(symbol, address): 
+                    outFile.write("#Error: Invalid symbol name.")
                     FatalError("#Error: Invalid symbol name.")
+            else:
+                outFile.write("#Error: Symbol name already exists.")
+                FatalError('#Error: Symbol name already exists.')
 
             
 #################################################################################

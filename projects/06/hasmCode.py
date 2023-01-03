@@ -48,10 +48,18 @@ class Code(object):
             'M':    '001',
             'D':    '010',
             'MD':   '011',
+            'DM':   '011',
             'A':    '100',
             'AM':   '101',
+            'MA':   '101',
             'AD':   '110',
-            'AMD':  '111'
+            'DA':   '110',
+            'AMD':  '111',
+            'ADM':  '111',
+            'MAD':  '111',
+            'MDA':  '111',
+            'DAM':  '111',
+            'DMA':  '111'
     }
     _jumpDict = {
             'JGT': '001',
@@ -75,10 +83,7 @@ class Code(object):
 
         Returns None if the mnemonic cannot be decoded.
         """
-        if mnemonic in self._destDict:
-            return self._destDict[mnemonic]
-        else:
-            return None     
+        return self._destDict.get(mnemonic, None)   
  
 ################################################################
 # To be completed:
