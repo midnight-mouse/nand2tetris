@@ -79,18 +79,18 @@ D=M
 @SP
 AM=M-1
 D=M-D
-@_2TRUE
+@Main.fibonacci$TRUE.2
 D;JLT
 @SP
 A=M
 M=0
-@_2CONT
+@Main.fibonacci$CONT.2
 0;JMP
-(_2TRUE)
+(Main.fibonacci$TRUE.2)
 @SP
 A=M
 M=-1
-(_2CONT)
+(Main.fibonacci$CONT.2)
 @SP
 M=M+1
 // if-goto

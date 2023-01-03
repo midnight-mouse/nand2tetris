@@ -231,9 +231,9 @@ class CodeWriter(object):
             jmp = conditions[command]
 
             # generate TRUE and CONTINUE label
-            label = self._UniqueLabel()
-            true_label = label + 'TRUE'
-            cont_label = label + 'CONT'
+            label = self._UniqueLabel()[1:]
+            true_label = self._LocalLabel('TRUE.' + label)
+            cont_label = self._LocalLabel('CONT.' + label)
 
             # check jmp condition
             code = f'@SP, AM=M-1, D=M, @SP, AM=M-1, D=M-D, @{true_label}, D;{jmp}, '
@@ -249,8 +249,7 @@ class CodeWriter(object):
 
     def WriteInit(self, sysinit = True):
         """
-        Write the VM initialization code:
-	To be implemented as part of Project 7
+        Initializes stack pointer (SP) to 256 and calls Sys.init.
         """
         if (debug):
             self.file.write('    // Initialization code\n')
@@ -262,17 +261,14 @@ class CodeWriter(object):
 
     def WriteLabel(self, label):
         """
-        Write Hack code for 'label' VM command.
-	To be implemented as part of Project 7
-
+        Creates and inserts a local label of the form "functionName$label"
         """
         self.Write('// label')
         self._WriteCode(f'({self._LocalLabel(label)})')
 
     def WriteGoto(self, label):
         """
-        Write Hack code for 'goto' VM command.
-	To be implemented as part of Project 7
+        Creates and inserts the code for an uncodintional jump to "functionName$label"
         """
         self.Write('// goto')
         self._WriteCode(f'@{self._LocalLabel(label)}, 0;JMP')
