@@ -92,7 +92,6 @@ class Parser(object):
         if parts[0] in T_ARITHMETIC: self.commandType = C_ARITHMETIC
         elif parts[0] == T_PUSH:     self.commandType = C_PUSH
         elif parts[0] == T_POP:      self.commandType = C_POP
-        elif parts[0] == T_CALL:     self.commandType = C_CALL
         elif parts[0] == T_LABEL:    self.commandType = C_LABEL
         elif parts[0] == T_GOTO:     self.commandType = C_GOTO
         elif parts[0] == T_IF:       self.commandType = C_IF
@@ -109,7 +108,4 @@ class Parser(object):
             self.arg2 = int(parts[2])
         elif parts[0] in (T_LABEL, T_GOTO, T_IF):
             self.arg1 = parts[1]
-            self.arg2 = 0
-        elif parts[0] in (T_RETURN):
-            self.arg1 = 0
             self.arg2 = 0
