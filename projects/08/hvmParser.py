@@ -103,7 +103,7 @@ class Parser(object):
         if parts[0] in T_ARITHMETIC:
             self.arg1 = parts[0]
             self.arg2 = 0    
-        elif parts[0] in (T_PUSH, T_POP, T_CALL, T_FUNCTION, T_CALL):
+        elif parts[0] in (T_PUSH, T_POP, T_FUNCTION, T_CALL):
             self.arg1 = parts[1]
             self.arg2 = int(parts[2])
         elif parts[0] in (T_LABEL, T_GOTO, T_IF):
