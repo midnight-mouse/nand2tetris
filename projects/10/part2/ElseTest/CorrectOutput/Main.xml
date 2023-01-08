@@ -65,13 +65,13 @@
               <expression>
                 <term>
                   <identifier> argument </identifier>
-                </term>            
+                </term>
               </expression>
               <symbol> ; </symbol>
             </letStatement>
           </statements>
           <symbol> } </symbol>
-	</ifStatement>
+        </ifStatement>
         <ifStatement>
           <keyword> if </keyword>
           <symbol> ( </symbol>
