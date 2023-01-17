@@ -1,0 +1,97 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * Memory operations library.
+ */ 
+class Memory {
+
+    static array ram;
+    static int free;
+
+    /** Initializes memory parameters. */
+    function void init() {
+        let ram = 0;
+        let free = 2048;
+        do Memory.poke(free, (16384 - 2048));  // Number of spots in heap
+        do Memory.poke(free + 1, 0);
+
+        return;
+    }
+
+    /** Returns the value of the main memory at the given address. */
+    function int peek(int address) {
+        var int value;
+        let value = ram[address];
+
+        return value;
+    }
+
+    /** Sets the value of the main memory at this address
+     *  to the given value. */
+    function void poke(int address, int value) {
+        let ram[address] = value;
+
+        return;
+    }
+
+    /** finds and allocates from the heap a memory block of the 
+     *  specified size and returns a reference to its base address. */
+    function int alloc(int size) {
+        // Keep track of memory block
+        var int blockstart;
+        var int blocksize;
+        var int block;
+
+        // Initialize to heap start
+        let blockstart = free;
+        let blocksize = Memory.peek(free);
+
+        while (blocksize < (size + 2)) {
+            // Go to next memory block
+            let blockstart = Memory.peek(blockstart + 1);
+
+            // Check if last block
+            if (blockstart = 0) { return 0; }
+
+            // Update size
+            let blocksize = Memory.peek(blockstart);
+        }
+
+        // Found memory block of adequate size
+        let block = blockstart + blocksize - size;
+        do Memory.poke(block - 1, size + 1);
+
+        // Decrease space left of previous memory block
+        do Memory.poke(blockstart, blocksize - (size + 1));
+
+        // Return address of block
+        return block;
+    }
+
+    /** De-allocates the given object and frees its space. */
+    function void deAlloc(int object) {
+
+        // Keep track of memory block
+        var int blockstart;
+        var int blocknext;
+
+        // Initialize to heap start
+        let blockstart = free;
+        let blocknext = Memory.peek(free + 1);
+
+        // Find last free memory block in list
+        while (~(blocknext = 0)) {
+            let blockstart = blocknext;
+            let blocknext = Memory.peek(blockstart + 1);
+        }
+
+        // Link last block to returned object, and object segment to null
+        do Memory.poke(blockstart + 1, object - 1);
+        do Memory.poke(object, 0);
+
+        return;
+    }    
+}
